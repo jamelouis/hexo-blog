@@ -21,7 +21,7 @@
   <meta name="description" content="第七周的学习课程主要讲述了两大主题：机器学习实践的建议与机器学习系统设计。 机器学习实践的建议当模型在测试样例集没有给出满意的预测数据时，下一步要做什么呢？  获取更多的训练数据 尝试更少的特征集 尝试添加额外的特征 尝试多项式特征 增加lambda 减少lambda  评估一个假设，需要将训练样例分为训练集和测试集。 测试集错误率  线性回归 - 均方误差 对数几率回归 - 测试集所有的misc">
 <meta property="og:type" content="article">
 <meta property="og:title" content="笔记：机器学习 - Week 7">
-<meta property="og:url" content="http://jamelouis.github.io/2018/11/20/machine-learning-week-07/index.html">
+<meta property="og:url" content="http://jamelouis.github.io/hexo-blog/2018/11/20/machine-learning-week-07/index.html">
 <meta property="og:site_name" content="Hexo">
 <meta property="og:description" content="第七周的学习课程主要讲述了两大主题：机器学习实践的建议与机器学习系统设计。 机器学习实践的建议当模型在测试样例集没有给出满意的预测数据时，下一步要做什么呢？  获取更多的训练数据 尝试更少的特征集 尝试添加额外的特征 尝试多项式特征 增加lambda 减少lambda  评估一个假设，需要将训练样例分为训练集和测试集。 测试集错误率  线性回归 - 均方误差 对数几率回归 - 测试集所有的misc">
 <meta property="og:locale" content="en_US">
@@ -30,7 +30,7 @@
 <meta property="article:author" content="John Doe">
 <meta name="twitter:card" content="summary">
   <!-- Canonical links -->
-  <link rel="canonical" href="http://jamelouis.github.io/2018/11/20/machine-learning-week-07/index.html">
+  <link rel="canonical" href="http://jamelouis.github.io/hexo-blog/2018/11/20/machine-learning-week-07/index.html">
   
     <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
   
@@ -38,7 +38,7 @@
     <link rel="icon" href="/favicon.png" type="image/x-icon">
   
   
-<link rel="stylesheet" href="/css/style.css">
+<link rel="stylesheet" href="/hexo-blog/css/style.css">
 
   
   
@@ -55,7 +55,7 @@
       
       <div class="profile-block text-center">
         <a id="avatar" href="https://github.com/jamelouis" target="_blank">
-          <img class="img-circle img-rotate" src="/images/avatar.png" width="200" height="200">
+          <img class="img-circle img-rotate" src="/hexo-blog/images/avatar.png" width="200" height="200">
         </a>
         <h2 id="name" class="hidden-xs hidden-sm">Jame Louis</h2>
         <h3 id="title" class="hidden-xs hidden-sm hidden-md">Game Engine Developer</h3>
@@ -99,7 +99,7 @@
         
         
         <li class="menu-item menu-item-home">
-          <a href="/.">
+          <a href="/hexo-blog/.">
             
             <i class="icon icon-home-fill"></i>
             
@@ -109,7 +109,7 @@
         
         
         <li class="menu-item menu-item-archives">
-          <a href="/archives">
+          <a href="/hexo-blog/archives">
             
             <i class="icon icon-archives-fill"></i>
             
@@ -119,7 +119,7 @@
         
         
         <li class="menu-item menu-item-categories">
-          <a href="/categories">
+          <a href="/hexo-blog/categories">
             
             <i class="icon icon-folder"></i>
             
@@ -129,7 +129,7 @@
         
         
         <li class="menu-item menu-item-tags">
-          <a href="/tags">
+          <a href="/hexo-blog/tags">
             
             <i class="icon icon-tags"></i>
             
@@ -139,7 +139,7 @@
         
         
         <li class="menu-item menu-item-repository">
-          <a href="/repository">
+          <a href="/hexo-blog/repository">
             
             <i class="icon icon-project"></i>
             
@@ -149,7 +149,7 @@
         
         
         <li class="menu-item menu-item-books">
-          <a href="/books">
+          <a href="/hexo-blog/books">
             
             <i class="icon icon-book-fill"></i>
             
@@ -159,7 +159,7 @@
         
         
         <li class="menu-item menu-item-links">
-          <a href="/links">
+          <a href="/hexo-blog/links">
             
             <i class="icon icon-friendship"></i>
             
@@ -169,7 +169,7 @@
         
         
         <li class="menu-item menu-item-about">
-          <a href="/about">
+          <a href="/hexo-blog/about">
             
             <i class="icon icon-cup-fill"></i>
             
@@ -190,7 +190,7 @@
         
         <li><a href="https://github.com/jamelouis" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
         
-        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
         
     </ul>
 
@@ -218,7 +218,7 @@
   <div class="widget">
     <h3 class="widget-title">Categories</h3>
     <div class="widget-body">
-      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Misc/">Misc</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/Rendering/">Rendering</a><span class="category-list-count">58</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/computer-graphics/">computer-graphics</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/categories/computer-graphics/EyeAdaptation/">EyeAdaptation</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/categories/machine-learning/">machine-learning</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/misc/">misc</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/python/">python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/categories/web/">web</a><span class="category-list-count">1</span></li></ul>
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/Misc/">Misc</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/Rendering/">Rendering</a><span class="category-list-count">58</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a><span class="category-list-count">6</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/EyeAdaptation/">EyeAdaptation</a><span class="category-list-count">1</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/machine-learning/">machine-learning</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/misc/">misc</a><span class="category-list-count">1</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/python/">python</a><span class="category-list-count">3</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/web/">web</a><span class="category-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -228,7 +228,7 @@
   <div class="widget">
     <h3 class="widget-title">Tags</h3>
     <div class="widget-body">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/Rendering-Weekly/" rel="tag">Rendering-Weekly</a><span class="tag-list-count">58</span></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li></ul>
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/Rendering-Weekly/" rel="tag">Rendering-Weekly</a><span class="tag-list-count">58</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li></ul>
     </div>
   </div>
 
@@ -238,7 +238,7 @@
   <div class="widget">
     <h3 class="widget-title">Tag Cloud</h3>
     <div class="widget-body tagcloud">
-      <a href="/tags/Rendering-Weekly/" style="font-size: 14px;">Rendering-Weekly</a> <a href="/tags/hexo/" style="font-size: 13px;">hexo</a>
+      <a href="/hexo-blog/tags/Rendering-Weekly/" style="font-size: 14px;">Rendering-Weekly</a> <a href="/hexo-blog/tags/hexo/" style="font-size: 13px;">hexo</a>
     </div>
   </div>
 
@@ -247,7 +247,7 @@
   <div class="widget">
     <h3 class="widget-title">Archive</h3>
     <div class="widget-body">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2023/05/">May 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/07/">July 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/06/">June 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/03/">March 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/02/">February 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2021/01/">January 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/11/">November 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/10/">October 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/07/">July 2020</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/12/">December 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2017/11/">November 2017</a><span class="archive-list-count">3</span></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2023/05/">May 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/07/">July 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/06/">June 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/03/">March 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/02/">February 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/01/">January 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/11/">November 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/10/">October 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/07/">July 2020</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/12/">December 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/11/">November 2017</a><span class="archive-list-count">3</span></li></ul>
     </div>
   </div>
 
@@ -263,10 +263,10 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/Misc/">Misc</a>
+                <a class="category-link" href="/hexo-blog/categories/Misc/">Misc</a>
               </p>
               <p class="item-title">
-                <a href="/2023/05/07/hello-hexo/" class="title">Hello hexo</a>
+                <a href="/hexo-blog/2023/05/07/hello-hexo/" class="title">Hello hexo</a>
               </p>
               <p class="item-date">
                 <time datetime="2023-05-07T14:03:50.490Z" itemprop="datePublished">2023-05-07</time>
@@ -278,10 +278,10 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/Rendering/">Rendering</a>
+                <a class="category-link" href="/hexo-blog/categories/Rendering/">Rendering</a>
               </p>
               <p class="item-title">
-                <a href="/2021/08/22/rendering-weekly-058/" class="title">Rendering Weekly 058</a>
+                <a href="/hexo-blog/2021/08/22/rendering-weekly-058/" class="title">Rendering Weekly 058</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-08-22T08:38:43.358Z" itemprop="datePublished">2021-08-22</time>
@@ -293,10 +293,10 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/Rendering/">Rendering</a>
+                <a class="category-link" href="/hexo-blog/categories/Rendering/">Rendering</a>
               </p>
               <p class="item-title">
-                <a href="/2021/08/15/rendering-weekly-057/" class="title">Rendering Weekly 057</a>
+                <a href="/hexo-blog/2021/08/15/rendering-weekly-057/" class="title">Rendering Weekly 057</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-08-15T15:12:51.466Z" itemprop="datePublished">2021-08-15</time>
@@ -308,10 +308,10 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/Rendering/">Rendering</a>
+                <a class="category-link" href="/hexo-blog/categories/Rendering/">Rendering</a>
               </p>
               <p class="item-title">
-                <a href="/2021/08/08/rendering-weekly-056/" class="title">Rendering Weekly 056</a>
+                <a href="/hexo-blog/2021/08/08/rendering-weekly-056/" class="title">Rendering Weekly 056</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-08-08T08:06:02.688Z" itemprop="datePublished">2021-08-08</time>
@@ -323,10 +323,10 @@
             
             <div class="item-inner">
               <p class="item-category">
-                <a class="category-link" href="/categories/Rendering/">Rendering</a>
+                <a class="category-link" href="/hexo-blog/categories/Rendering/">Rendering</a>
               </p>
               <p class="item-title">
-                <a href="/2021/08/01/rendering-weekly-055/" class="title">Rendering Weekly 055</a>
+                <a href="/hexo-blog/2021/08/01/rendering-weekly-055/" class="title">Rendering Weekly 055</a>
               </p>
               <p class="item-date">
                 <time datetime="2021-08-01T12:00:54.247Z" itemprop="datePublished">2021-08-01</time>
@@ -362,21 +362,21 @@
       <div class="article-meta">
         <span class="article-date">
     <i class="icon icon-calendar-check"></i>
-	<a href="/2018/11/20/machine-learning-week-07/" class="article-date">
+	<a href="/hexo-blog/2018/11/20/machine-learning-week-07/" class="article-date">
 	  <time datetime="2018-11-20T03:03:31.000Z" itemprop="datePublished">2018-11-20</time>
 	</a>
 </span>
         
   <span class="article-category">
     <i class="icon icon-folder"></i>
-    <a class="article-category-link" href="/categories/machine-learning/">machine-learning</a>
+    <a class="article-category-link" href="/hexo-blog/categories/machine-learning/">machine-learning</a>
   </span>
 
         
 
         
 
-        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/2018/11/20/machine-learning-week-07/#comments" class="article-comment-link">Comments</a></span>
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/hexo-blog/2018/11/20/machine-learning-week-07/#comments" class="article-comment-link">Comments</a></span>
         
       </div>
     </div>
@@ -468,7 +468,7 @@
     
     <li class="post-copyright-link hidden-xs">
       <strong>本文链接：</strong>
-      <a href="http://jamelouis.github.io/2018/11/20/machine-learning-week-07/" title="笔记：机器学习 - Week 7" target="_blank" rel="external">http://jamelouis.github.io/2018/11/20/machine-learning-week-07/</a>
+      <a href="http://jamelouis.github.io/hexo-blog/2018/11/20/machine-learning-week-07/" title="笔记：机器学习 - Week 7" target="_blank" rel="external">http://jamelouis.github.io/hexo-blog/2018/11/20/machine-learning-week-07/</a>
     </li>
     
     <li class="post-copyright-license">
@@ -483,7 +483,7 @@
     <figure class="media">
       <div class="media-left">
         <a href="https://github.com/jamelouis" target="_blank" class="img-burn thumb-sm visible-lg">
-          <img src="/images/avatar.png" class="img-rounded w-full" alt="">
+          <img src="/hexo-blog/images/avatar.png" class="img-rounded w-full" alt="">
         </a>
       </div>
       <div class="media-body">
@@ -515,12 +515,12 @@
   <ul class="pager pull-left">
     
     <li class="prev">
-      <a href="/2018/12/08/some-thoughts-from-one-bug/" title="一个bug引发的思考"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+      <a href="/hexo-blog/2018/12/08/some-thoughts-from-one-bug/" title="一个bug引发的思考"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
     </li>
     
     
     <li class="next">
-      <a href="/2018/03/14/global-illumination/" title="Global Illumination(全局光照)"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+      <a href="/hexo-blog/2018/03/14/build-cryengine-from-source-code/" title="Build CryEngine From Source Code"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
     </li>
     
     
@@ -553,7 +553,7 @@
         
         <li><a href="https://github.com/jamelouis" target="_blank" title="Behance" data-toggle=tooltip data-placement=top><i class="icon icon-behance"></i></a></li>
         
-        <li><a href="/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
         
     </ul>
 
@@ -569,10 +569,10 @@
 window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
 </script>
 
-<script src="/js/plugin.min.js"></script>
+<script src="/hexo-blog/js/plugin.min.js"></script>
 
 
-<script src="/js/application.js"></script>
+<script src="/hexo-blog/js/application.js"></script>
 
 
     <script>
@@ -585,14 +585,14 @@ window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
             TAGS: 'Tags',
             UNTITLED: '(Untitled)',
         },
-        ROOT_URL: '/',
-        CONTENT_URL: '/content.json',
+        ROOT_URL: '/hexo-blog/',
+        CONTENT_URL: '/hexo-blog/content.json',
     };
     window.INSIGHT_CONFIG = INSIGHT_CONFIG;
 })(window);
 </script>
 
-<script src="/js/insight.js"></script>
+<script src="/hexo-blog/js/insight.js"></script>
 
 
 
