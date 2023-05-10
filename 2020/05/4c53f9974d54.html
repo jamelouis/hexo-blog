@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>Rendering Weekly 002 | Hexo</title>
+  <meta name="description" content="周报 第2期文章 GBuffer helper - Packing integer and float  GBuffer Layout是Defered Rendering重要组成。Layout一般都需要将int和float的数值编码到GBuffer对应LDR纹理中。本篇博文主要论述了如何编码int和float数值的过程。  PBR - github (code)  Nadrin用不同的图形API(">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rendering Weekly 002">
+<meta property="og:url" content="http://jamelouis.github.io/hexo-blog/2020/05/4c53f9974d54.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="周报 第2期文章 GBuffer helper - Packing integer and float  GBuffer Layout是Defered Rendering重要组成。Layout一般都需要将int和float的数值编码到GBuffer对应LDR纹理中。本篇博文主要论述了如何编码int和float数值的过程。  PBR - github (code)  Nadrin用不同的图形API(">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-31T08:06:36.652Z">
+<meta property="article:modified_time" content="2023-05-10T13:16:43.050Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="Rendering-Weekly">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://jamelouis.github.io/hexo-blog/2020/05/4c53f9974d54.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/hexo-blog/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/jamelouis" target="_blank">
+          <img class="img-circle img-rotate" src="/hexo-blog/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Jame Louis</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Game Engine Developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/hexo-blog/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/hexo-blog/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/hexo-blog/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/hexo-blog/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/hexo-blog/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/hexo-blog/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/jamelouis" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/unreal-engine/">unreal-engine</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/misc/">misc</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a><span class="category-list-count">58</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/Rendering-Weekly/" rel="tag">Rendering-Weekly</a><span class="tag-list-count">58</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/path-tracing/" rel="tag">path-tracing</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/hexo-blog/tags/Rendering-Weekly/" style="font-size: 14px;">Rendering-Weekly</a> <a href="/hexo-blog/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/hexo-blog/tags/path-tracing/" style="font-size: 13px;">path-tracing</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2023/05/">May 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2022/06/">June 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/07/">July 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/06/">June 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/03/">March 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/02/">February 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/01/">January 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/11/">November 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/10/">October 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/07/">July 2020</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/12/">December 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/11/">November 2017</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/misc/">misc</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2023/05/b70cc33d7a69.html" class="title">Hello hexo</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-05-07T14:03:50.490Z" itemprop="datePublished">2023-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2022/06/4fa029a8a7a8.html" class="title">Nori 作业</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-06-10T03:03:31.000Z" itemprop="datePublished">2022-06-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/155ef8f50554.html" class="title">Rendering Weekly 058</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-22T08:38:43.358Z" itemprop="datePublished">2021-08-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/d972502152c9.html" class="title">Rendering Weekly 057</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-15T15:12:51.466Z" itemprop="datePublished">2021-08-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/e7be6253f23a.html" class="title">Rendering Weekly 056</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-08T08:06:02.688Z" itemprop="datePublished">2021-08-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-rendering-weekly-rendering-weekly-002" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      Rendering Weekly 002
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/hexo-blog/2020/05/4c53f9974d54.html" class="article-date">
+	  <time datetime="2020-05-31T08:06:36.652Z" itemprop="datePublished">2020-05-31</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+  </span>
+
+        
+  <span class="article-tag">
+    <i class="icon icon-tags"></i>
+	<a class="article-tag-link-link" href="/hexo-blog/tags/Rendering-Weekly/" rel="tag">Rendering-Weekly</a>
+  </span>
+
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/hexo-blog/2020/05/4c53f9974d54.html#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h1 id="周报-第2期"><a href="#周报-第2期" class="headerlink" title="周报 第2期"></a>周报 第2期</h1><h2 id="文章"><a href="#文章" class="headerlink" title="文章"></a>文章</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://seblagarde.wordpress.com/2018/09/02/gbuffer-helper-packing-integer-and-float-together/">GBuffer helper - Packing integer and float</a></p>
+<p> GBuffer Layout是Defered Rendering重要组成。Layout一般都需要将int和float的数值编码到GBuffer对应LDR纹理中。本篇博文主要论述了如何编码int和float数值的过程。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/Nadrin/PBR">PBR - github</a> (<em>code</em>)</p>
+<p> Nadrin用不同的图形API(OpenGL, OpenGLES, Vulkan, Dx11, DX12)实现PBR和IBL算法。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://google.github.io/filament/Filament.md.html">Physically Based Rendering in Filament</a> (<em>code</em>)</p>
+<p> Filament是实时的基于物理渲染引擎，支持Android,iOS,Linux,macOS, Windows, 和WebGL。该博文主要阐述了PBR公式和背后的理论，并且介绍了特定算法的选择缘由。</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/google/filament">Filement - github</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://pplux.github.io/why_px_render.html">px_render.h rationale</a> (<em>code</em>)</p>
+<p> px_render一个单独的c++头文件，实现了底层的渲染库。</p>
+<p> <a target="_blank" rel="noopener" href="https://github.com/pplux/px/blob/master/px_render.h">px_render.h - github</a></p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://aras-p.info/blog/2014/03/28/cross-platform-shaders-in-2014/">cross platform shaders</a></p>
+<p> 本博文介绍如何在引擎开发中编写跨平台的shader？利用宏，或者以hlsl和glsl为backend来重新定义一个shader语言，或者字节码间的转换，或者选择一个shader语言，利用第三方工具（HLSL Cross Compiler - UE4， hlsl2glslfork - Unity）进行不同着色语言的转换。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://www.shadertoy.com/view/4tVyDK">Visualizing floating point precision loss</a></p>
+<p> 可视化float数值类型的精度缺失。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://medium.com/@junyingw/future-of-gaming-rasterization-vs-ray-tracing-vs-path-tracing-32b334510f1f">rasterization vs ray tracing vs path tracing</a></p>
+<p> 栅格化 vs 光线追踪 vs 路径追踪</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://loopit.dk/inside_shipping_on_ios.pdf">inside shipping on ios</a></p>
+<p> 该pdf主要介绍如何将独立游戏inside移植到ios平台的过程。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="http://terathon.com/font_rendering_sota_lengyel.pdf">GPU font rendering</a></p>
+<p> 介绍了目前基于GPU的字体渲染的技术水平。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://community.arm.com/developer/tools-software/graphics/b/blog/posts/post-processing-effects-on-mobile-optimization-and-alternatives">post-processing effects on mobile: optimization and alternatives</a></p>
+<p>手机端GPU一般采用基于tile的渲染体系。基于这个基本点，forward rendering比deferred rendering更适合作为移动端的渲染技术方案。文章中详细剖析了Bloom在手游Nordeus’s Spellsouls的优化过程和其他不基于后期处理技术的bloom效果方案。</p>
+</li>
+</ol>
+<h2 id="教程"><a href="#教程" class="headerlink" title="教程"></a>教程</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="http://immersivemath.com/ila/learnmore.html">immersivemath</a></p>
+<p> 一个可交互式插图的关于线性代数的网站。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://community.arm.com/developer/tools-software/graphics/b/blog/posts/moving-mobile-graphics">Moving Mobile Graphics</a></p>
+<p> Siggraph的课程，旨在介绍移动端图形开发的当前现状。</p>
+</li>
+</ol>
+<h2 id="资料"><a href="#资料" class="headerlink" title="资料"></a>资料</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="https://shadertoyunofficial.wordpress.com/2018/04/16/readings-shaders-maths-3d/">Readings(shader, maths, 3D)</a></p>
+<p> 给初学者关于shader， 数学和3D的资料。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://gregstoll.com/~gregstoll/floattohex/">Compilation of 100+ 3D graphics academic</a></p>
+<p> Hugo Viala收集的关于3Dgraphics学术论文。以主题归类，如全局光照，阴影，渲染等等。</p>
+</li>
+</ol>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><ol>
+<li><p><a target="_blank" rel="noopener" href="http://timjones.io/blog/archive/2018/05/19/introducing-shader-playground">introducing shader playground</a></p>
+<p> 在线的着色器编译器。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://fbidb.io/">idb - github</a></p>
+<p>idb, facebook开源的一个终端工具。idb提供了类似于android平台的adb的功能。</p>
+</li>
+<li><p><a target="_blank" rel="noopener" href="https://github.com/luxuia/dxbc_reader">dxbc reader - github</a></p>
+<p> 可以把hlsl字节码逆向到hlsl文本的lua脚本。</p>
+</li>
+</ol>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://jamelouis.github.io/hexo-blog/2020/05/4c53f9974d54.html" title="Rendering Weekly 002" target="_blank" rel="external">http://jamelouis.github.io/hexo-blog/2020/05/4c53f9974d54.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/jamelouis" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/hexo-blog/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/jamelouis" target="_blank"><span class="text-dark">Jame Louis</span><small class="ml-1x">Game Engine Developer</small></a></h3>
+        <div>Focus on Computer Graphics, Rendering and Path Tracing。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/hexo-blog/2020/06/0560555eac55.html" title="Rendering Weekly 003"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/hexo-blog/2020/05/4469e2ee2257.html" title="Rendering Weekly 001"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/jamelouis" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/hexo-blog/js/plugin.min.js"></script>
+
+
+<script src="/hexo-blog/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/hexo-blog/',
+        CONTENT_URL: '/hexo-blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/hexo-blog/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>

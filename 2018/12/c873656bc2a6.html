@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>一个bug引发的思考 | Hexo</title>
+  <meta name="description" content="概述近期被指派去修复一个项目开发中的bug：  工程项目在Android Studio无法调试C&#x2F;C++本地代码    在修复bug的过程中，对工程开发有了一些感悟，比如，  bug从哪里来，到哪里去，在bug的“一生”中留下了什么 bug有繁衍性质吗，后序是否有相关bug的出现 bug处理时机与处理方式和处理代价的关系 如何维持跨平台下开发  Bug的“人生哲学”：我是谁项目是个跨平台">
+<meta property="og:type" content="article">
+<meta property="og:title" content="一个bug引发的思考">
+<meta property="og:url" content="http://jamelouis.github.io/hexo-blog/2018/12/c873656bc2a6.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="概述近期被指派去修复一个项目开发中的bug：  工程项目在Android Studio无法调试C&#x2F;C++本地代码    在修复bug的过程中，对工程开发有了一些感悟，比如，  bug从哪里来，到哪里去，在bug的“一生”中留下了什么 bug有繁衍性质吗，后序是否有相关bug的出现 bug处理时机与处理方式和处理代价的关系 如何维持跨平台下开发  Bug的“人生哲学”：我是谁项目是个跨平台">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-12-08T03:03:31.000Z">
+<meta property="article:modified_time" content="2023-05-10T13:34:43.174Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://jamelouis.github.io/hexo-blog/2018/12/c873656bc2a6.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/hexo-blog/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/jamelouis" target="_blank">
+          <img class="img-circle img-rotate" src="/hexo-blog/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Jame Louis</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Game Engine Developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/hexo-blog/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/hexo-blog/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/hexo-blog/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/hexo-blog/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/hexo-blog/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/hexo-blog/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/jamelouis" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/unreal-engine/">unreal-engine</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/misc/">misc</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a><span class="category-list-count">58</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/Rendering-Weekly/" rel="tag">Rendering-Weekly</a><span class="tag-list-count">58</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/path-tracing/" rel="tag">path-tracing</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/hexo-blog/tags/Rendering-Weekly/" style="font-size: 14px;">Rendering-Weekly</a> <a href="/hexo-blog/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/hexo-blog/tags/path-tracing/" style="font-size: 13px;">path-tracing</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2023/05/">May 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2022/06/">June 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/07/">July 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/06/">June 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/03/">March 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/02/">February 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/01/">January 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/11/">November 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/10/">October 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/07/">July 2020</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/12/">December 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/11/">November 2017</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/misc/">misc</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2023/05/b70cc33d7a69.html" class="title">Hello hexo</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-05-07T14:03:50.490Z" itemprop="datePublished">2023-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2022/06/4fa029a8a7a8.html" class="title">Nori 作业</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-06-10T03:03:31.000Z" itemprop="datePublished">2022-06-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/155ef8f50554.html" class="title">Rendering Weekly 058</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-22T08:38:43.358Z" itemprop="datePublished">2021-08-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/d972502152c9.html" class="title">Rendering Weekly 057</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-15T15:12:51.466Z" itemprop="datePublished">2021-08-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/e7be6253f23a.html" class="title">Rendering Weekly 056</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-08T08:06:02.688Z" itemprop="datePublished">2021-08-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-misc-some-thoughts-from-one-bug" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      一个bug引发的思考
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/hexo-blog/2018/12/c873656bc2a6.html" class="article-date">
+	  <time datetime="2018-12-08T03:03:31.000Z" itemprop="datePublished">2018-12-08</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/hexo-blog/categories/misc/">misc</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/hexo-blog/2018/12/c873656bc2a6.html#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h2><p>近期被指派去修复一个项目开发中的bug：</p>
+<blockquote>
+<p>工程项目在Android Studio无法调试C&#x2F;C++本地代码  </p>
+</blockquote>
+<p>在修复bug的过程中，对工程开发有了一些感悟，比如，</p>
+<ul>
+<li>bug从哪里来，到哪里去，在bug的“一生”中留下了什么</li>
+<li>bug有繁衍性质吗，后序是否有相关bug的出现</li>
+<li>bug处理时机与处理方式和处理代价的关系</li>
+<li>如何维持跨平台下开发</li>
+</ul>
+<h2 id="Bug的“人生哲学”：我是谁"><a href="#Bug的“人生哲学”：我是谁" class="headerlink" title="Bug的“人生哲学”：我是谁"></a>Bug的“人生哲学”：我是谁</h2><p>项目是个跨平台的，目前主要是移动端的，所以有Android，iOS，当然也有PC&#x2F;Mac的。团队成员一般在PC的Visual Studio开发环境上做日常的开发，平常很少在Android Studio上开发测试，除非是一些涉及到Android相关的功能。Bug是在开发Android相关功能时发现的，但不影响开发，或者说不影响具体的功能开发，所以只是留了个缺陷单。</p>
+<p>Bug据说已存活个把月了。Bug就在我们不知觉的状态，登堂入室了。但因优先级不是很高，且我之前用cmake重构过nk版的Android工程，所以bug就落在我的bug列表。</p>
+<p>那时对bug来了个深切的问候：</p>
+<blockquote>
+<p>你是谁？你来自哪里？  </p>
+</blockquote>
+<h2 id="给Bug来个手术"><a href="#给Bug来个手术" class="headerlink" title="给Bug来个手术"></a>给Bug来个手术</h2><p>古代医生看病，讲究望闻问切。修复bug，亦是如此。</p>
+<p><strong>复现</strong>。能复现的bug，就算修复了90%。剩下的10%就只是时间问题了。更新代码，开启Android Studio工程，在C_C++本地代码的常用接口处设置断点和接口调用的Java代码设置断点，确认的 bug模式为auto(可调试Java_C_C++），编译运行工程。Java断点触发，C_C++未触发，成功复现Bug。</p>
+<p><strong>排除IDE问题</strong>。在Android Studio开发环境，创建一个带有C&#x2F;C++代码的工程，按照上述的方式设置断点，断点皆触发。排除是由于IDE开发环境原因。</p>
+<p>做到了bug复现和排除了是开发环境的问题，接下来就是上网搜索相关的资料：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/debug/">Debug your app  |  Android Developers</a><ul>
+<li>了解基本的调试知识</li>
+</ul>
+</li>
+<li>确认CMake，LLDB，NDK是否安装<ul>
+<li>非IDE问题，可确认安装</li>
+</ul>
+</li>
+<li>配置AndroidManifest属性：android:debuggable&#x3D;true<ul>
+<li>无效，此属性会根据构建的类型自动设置</li>
+<li>可以设置构建类型分别为debug&#x2F;release，然后build-analyze apk</li>
+<li>在Analyze Apk窗口，选择AndroidManifest文件，查看对应属性</li>
+</ul>
+</li>
+<li>在build.gradle中设置：jniDebuggable &#x3D; true<ul>
+<li>新版本已废弃该属性</li>
+</ul>
+</li>
+<li>导入同事的setting.jar<ul>
+<li>都不能调试，无法验证</li>
+</ul>
+</li>
+</ul>
+<p>做了一番尝试后，发觉竟然是个“顽疾”。在尝试的过程中，因为项目的庞大性制，每次尝试一种可能的解决方案时，在验证处理上耗时很长，所以先放下了去寻找解决方案，从另外一个维度去做减法模式。</p>
+<p><strong>减法模式</strong>。鉴于之前的重构经验，轻车熟路地把C&#x2F;C++相关的代码移除，只留下一些空的接口实现，只剩一个空架子。</p>
+<p>做完减法模式后，又重复复现的操作，可复现，又重新回到了新的起点。Ctrl-C&#x2F;Ctrl-V模式失败后，打算换个角度来处理，因为之前简单的工程可以调试，所以考虑从两者的异同对比来挖掘出可能的解决方案。</p>
+<p> <strong>AndroidManifest属性</strong>。删除原来一些权限属性，尽量使两者的属性保持一致。编译运行验证，仍不可调试。</p>
+<p><strong>build.gradle</strong>。删除一些原来跨平台的资源拷贝和资源组织等非明显无关的配置属性。编译运行验证，仍不可调试。</p>
+<p>基于上述的处理后，整个工程项目的文件基本不多了。因此，用比较工具对比两个工程文件夹，细心地进行文件的一一对比。</p>
+<p>在app.iml文件中，有一个明显的异常，如下：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">facet</span> <span class="attr">type</span>=<span class="string">&quot;native-android-gradle&quot;</span> <span class="attr">name</span>=<span class="string">&quot;Native-Android-Gradle&quot;</span>&gt;</span>       </span><br><span class="line"><span class="tag">&lt;<span class="name">configuration</span>&gt;</span>         </span><br><span class="line"><span class="tag">&lt;<span class="name">option</span> <span class="attr">name</span>=<span class="string">&quot;SELECTED_BUILD_VARIANT&quot;</span> <span class="attr">value</span>=<span class="string">&quot;release&quot;</span> /&gt;</span>       </span><br><span class="line"><span class="tag">&lt;/<span class="name">configuration</span>&gt;</span>     </span><br><span class="line"><span class="tag">&lt;/<span class="name">facet</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>手动修改后，通过另一番折腾（见下文）后，终于可以调试了。通过版本管理工具，恢复了“手术”处理现场，回到最初的状态，手动更新* SELECTED_BUILD_VARIANT*属性，编译运行验证，可调试。于此，bug算走到它的尽头了。</p>
+<h2 id="bug留下了什么？"><a href="#bug留下了什么？" class="headerlink" title="bug留下了什么？"></a>bug留下了什么？</h2><p>走到这里，已经算可以交差了，但细细一想，bug从哪里来，仍然还是一无所知。处理过程中，团队的其他人员有的开始感受到Android Studio无法调试带来的麻烦。在接受这个bug时，和同事或多或少聊了，对bug的由来都不知所措。而我在尝试解决这个bug时，也耗费了不少脑细胞，所以对自己提了几个问题：</p>
+<ul>
+<li>app.iml的属性是怎么被修改的</li>
+<li>如何避免同样，或者类似的问题</li>
+<li>假如更早的处理这个问题，会怎么样的情形？</li>
+</ul>
+<h3 id="app-iml的属性是怎么被修改的"><a href="#app-iml的属性是怎么被修改的" class="headerlink" title="app.iml的属性是怎么被修改的"></a>app.iml的属性是怎么被修改的</h3><p>点击菜单 build -&gt; select build variant ，会有一个面板出现在左边的工作区，有个下拉菜单可以选择 debug&#x2F;release 选项。用文本编辑器打开工程项目的 app.iml 文件，找到 <strong>native-android-gradle</strong> 项。切换下拉菜单项，对应的app.iml的选项也跟着变化。然后手动改变属性，返回Android Studio再次切换属性选项，尝试了几次，遇到IDE报错，遇到了切换属性对应的 app.iml 配置没有变化。<br>因此，猜测可能是有同事本地切换了 release ，更新代码过程中，有冲突或者什么原因导致了该属性被设置成了 release 。至此，大体了解了bug来自哪里了。</p>
+<h3 id="如何避免同样，或者类似的问题"><a href="#如何避免同样，或者类似的问题" class="headerlink" title="如何避免同样，或者类似的问题"></a>如何避免同样，或者类似的问题</h3><p>目前，bug的问题可以归结为：</p>
+<blockquote>
+<p>由于 app.iml 文件的属性被设置成 release ，因此不可调试。<br>从这个角度看，只要修改属性即可解决问题，但并不能保证以后不发生。</p>
+</blockquote>
+<p><strong>app.iml 文件</strong>。一番搜索后，该文件属于中间文件，可以不纳入版本控制里。这也可能是之前导入其他同事setting.jar解决问题的缘由。</p>
+<blockquote>
+<p>由于把中间配置文件加入了版本控制里，因此所有开发者的开发环境都不可调试。<br>从这个角度看，只要从版本控制工具里移除 .iml 文件即可解决问题，可以保证不影响其他同事的开发环境。</p>
+</blockquote>
+<h3 id="假如更早的处理这个问题，会怎么样的情形？"><a href="#假如更早的处理这个问题，会怎么样的情形？" class="headerlink" title="假如更早的处理这个问题，会怎么样的情形？"></a>假如更早的处理这个问题，会怎么样的情形？</h3><p>对于一些比较棘手、没有头绪的、让人不知所措的bug，假如之前没有的和项目使用了版本管理工具，一般的思路会是采用二分法回滚代码测试验证。</p>
+<p>因为之前的版本是可调试的，如果是更早的处理这个bug，通过二分回滚法，会是很简单的一个bug。因为bug的产生就是配置属性被错误的修改了。而且，是越早越容易处理。</p>
+<p>Bug存在时间已有个把月了，回溯的工作量很多，且难以保证回溯后的工程可以编译成功。因此，就没选择二分回滚大法。</p>
+<h2 id="跨平台下处理bug的一些思考"><a href="#跨平台下处理bug的一些思考" class="headerlink" title="跨平台下处理bug的一些思考"></a>跨平台下处理bug的一些思考</h2><p>由上述可知，及时反馈及时处理可以减少很多不必要的工作和精力。但同时维护多个平台时，特别是项目开发周期很紧张时，是一件很难的事情。因此，开发者一般都是在某一特定的平台下开发跨平台的功能，只有涉及到具体平台相关的功能，才会切换到对应的开发平台下继续开发。</p>
+<p>因为这样的开发模式，能加快功能的开发进度，但同时也引入不少的弊端，譬如文中要处理的bug，其他平台编译不过，其他平台不可运行等等。特别针对某个特定平台版本验收时，可能会暂时不去开发其他平台的功能需求，这种一般导致其他平台项目滞后，如我之前重构的nk工程，那时任务是让nk工程可运行。</p>
+<p>可能会觉得这样的开发模式是不对的。开发某种功能，需要在多个平台下统一验证下，才可以提交对应的代码修改。或许是对的，但需要团队的统一认可和无条件的执行。目前，实际上很难做到。</p>
+<p><strong>见招拆招</strong>。引入持续集成和自动测试机制。当团队中有人提交了代码，持续集成系统会触发构建，并将构建的信息反馈到开发者，保证了代码的修改能够让所有平台编译无错误。自动测试机制，就是测试开发人员和功能开发人员一起把功能的测试样例加入自动测试系统中。自动测试系统会按计划在较短的时间段内回归测试，如果测试不通过，会有相关的信息反馈到功能开发者。于此，发出了<strong>异曲同工</strong>之妙的感叹。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><blockquote>
+<p>工程项目在Android Studio无法调试C&#x2F;C++本地代码<br>可以修改app.iml的配置属性上治标；也可以从版本控制器里移除app.iml上治本。<br>bug处理时机与处理方式和处理代价的关系<br>神医扁鹊曾言，大哥医术最高，二哥次之，扁鹊最后。大哥，医人于病前，二哥，医人于病时，扁鹊，医人于病危。扁鹊三兄弟的哲理故事，说明了越早处理越容易，也不用上动刀大手术。《游戏改变世界》提到游戏上瘾的一大特性是：反馈。引入了持续构建和自动测试体系，就能做到二哥的水平，治“虫”于“虫”幼时。</p>
+</blockquote>
+<h2 id="附注：另一番折腾"><a href="#附注：另一番折腾" class="headerlink" title="附注：另一番折腾"></a>附注：另一番折腾</h2><p>处理 bug 过程在 PC 上的夜神模拟器上工作的，为了避免一次编译多个不同体系下的apk包，就添加了 abiFilters: armeabi-v7a 。然而夜神模拟器则是 X86_64 体系的。</p>
+<h2 id="参考"><a href="#参考" class="headerlink" title="参考"></a>参考</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://bbs.csdn.net/topics/392217263?page=1">android studio c&#x2F;c++调试时无法在c&#x2F;c++文件中左键打断点-CSDN论坛</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/a40850273/article/details/81699037">Android Studio 无法调试 C&#x2F;C++ 程序 - 死亡叹息的博客 - CSDN博客</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/45d5ff676db8">android studio调试c&#x2F;c++代码 - 简书</a></li>
+<li>✳️ <a target="_blank" rel="noopener" href="https://developer.android.google.cn/studio/debug/">Debug your app  |  Android Developers</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/7f80be68f99b">Android Studio c++ 无法单步调试的系列坑 - 简书</a></li>
+<li>✳️<a target="_blank" rel="noopener" href="https://www.jianshu.com/p/d2c8f3caef74">Android studio 无法断点调试C问题 - 简书</a></li>
+<li>✳️ <a target="_blank" rel="noopener" href="https://stackoverflow.com/questions/30737082/what-are-iml-files-in-android-studio">intellij idea - What are iml files in Android Studio? - Stack Overflow</a></li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://jamelouis.github.io/hexo-blog/2018/12/c873656bc2a6.html" title="一个bug引发的思考" target="_blank" rel="external">http://jamelouis.github.io/hexo-blog/2018/12/c873656bc2a6.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/jamelouis" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/hexo-blog/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/jamelouis" target="_blank"><span class="text-dark">Jame Louis</span><small class="ml-1x">Game Engine Developer</small></a></h3>
+        <div>Focus on Computer Graphics, Rendering and Path Tracing。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/hexo-blog/2020/05/4469e2ee2257.html" title="Rendering Weekly 001"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/hexo-blog/2018/11/d517f9727b2c.html" title="笔记：机器学习 - Week 7"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/jamelouis" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/hexo-blog/js/plugin.min.js"></script>
+
+
+<script src="/hexo-blog/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/hexo-blog/',
+        CONTENT_URL: '/hexo-blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/hexo-blog/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>

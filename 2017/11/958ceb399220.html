@@ -1,0 +1,615 @@
+<!DOCTYPE html>
+<html lang=en>
+<head>
+  <meta charset="utf-8">
+  
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, minimal-ui">
+  <meta name="renderer" content="webkit">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <meta name="format-detection" content="telephone=no,email=no,adress=no">
+  <!-- Color theme for statusbar -->
+  <meta name="theme-color" content="#000000" />
+  <!-- 强制页面在当前窗口以独立页面显示,防止别人在框架里调用页面 -->
+  <meta http-equiv="window-target" content="_top" />
+  
+  
+  <title>浅析UE4中的EyeAdaption | Hexo</title>
+  <meta name="description" content="UE4是采用基于Histogram的方法来计算">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析UE4中的EyeAdaption">
+<meta property="og:url" content="http://jamelouis.github.io/hexo-blog/2017/11/958ceb399220.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="UE4是采用基于Histogram的方法来计算">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/5.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/4.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/3.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/2.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/6.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/5.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/7.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/3.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/11.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/10.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/9.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/8.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/12.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/5.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/11.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/10.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/9.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/8.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/7.svg">
+<meta property="og:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/12.svg">
+<meta property="article:published_time" content="2017-11-14T14:03:31.000Z">
+<meta property="article:modified_time" content="2023-05-10T13:16:43.054Z">
+<meta property="article:author" content="John Doe">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://jamelouis.github.io/hexo-blog/images/eye_adaptation/5.svg">
+  <!-- Canonical links -->
+  <link rel="canonical" href="http://jamelouis.github.io/hexo-blog/2017/11/958ceb399220.html">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png" type="image/x-icon">
+  
+  
+<link rel="stylesheet" href="/hexo-blog/css/style.css">
+
+  
+  
+  
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body class="main-center" itemscope itemtype="http://schema.org/WebPage">
+  <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+  <div class="slimContent">
+    <div class="navbar-header">
+      
+      
+      <div class="profile-block text-center">
+        <a id="avatar" href="https://github.com/jamelouis" target="_blank">
+          <img class="img-circle img-rotate" src="/hexo-blog/images/avatar.png" width="200" height="200">
+        </a>
+        <h2 id="name" class="hidden-xs hidden-sm">Jame Louis</h2>
+        <h3 id="title" class="hidden-xs hidden-sm hidden-md">Game Engine Developer</h3>
+        <small id="location" class="text-muted hidden-xs hidden-sm"><i class="icon icon-map-marker"></i> Shenzhen, China</small>
+      </div>
+      
+      <div class="search" id="search-form-wrap">
+
+    <form class="search-form sidebar-form">
+        <div class="input-group">
+            <input type="text" class="search-form-input form-control" placeholder="Search" />
+            <span class="input-group-btn">
+                <button type="submit" class="search-form-submit btn btn-flat" onclick="return false;"><i class="icon icon-search"></i></button>
+            </span>
+        </div>
+    </form>
+    <div class="ins-search">
+  <div class="ins-search-mask"></div>
+  <div class="ins-search-container">
+    <div class="ins-input-wrapper">
+      <input type="text" class="ins-search-input" placeholder="Type something..." x-webkit-speech />
+      <button type="button" class="close ins-close ins-selectable" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">×</span></button>
+    </div>
+    <div class="ins-section-wrapper">
+      <div class="ins-section-container"></div>
+    </div>
+  </div>
+</div>
+
+
+</div>
+      <button class="navbar-toggle collapsed" type="button" data-toggle="collapse" data-target="#main-navbar" aria-controls="main-navbar" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+    </div>
+    <nav id="main-navbar" class="collapse navbar-collapse" itemscope itemtype="http://schema.org/SiteNavigationElement" role="navigation">
+      <ul class="nav navbar-nav main-nav ">
+        
+        
+        <li class="menu-item menu-item-home">
+          <a href="/hexo-blog/.">
+            
+            <i class="icon icon-home-fill"></i>
+            
+            <span class="menu-title">Home</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/hexo-blog/archives">
+            
+            <i class="icon icon-archives-fill"></i>
+            
+            <span class="menu-title">Archives</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/hexo-blog/categories">
+            
+            <i class="icon icon-folder"></i>
+            
+            <span class="menu-title">Categories</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/hexo-blog/tags">
+            
+            <i class="icon icon-tags"></i>
+            
+            <span class="menu-title">Tags</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-repository">
+          <a href="/hexo-blog/repository">
+            
+            <i class="icon icon-project"></i>
+            
+            <span class="menu-title">Repository</span>
+          </a>
+        </li>
+        
+        
+        <li class="menu-item menu-item-about">
+          <a href="/hexo-blog/about">
+            
+            <i class="icon icon-cup-fill"></i>
+            
+            <span class="menu-title">About</span>
+          </a>
+        </li>
+        
+      </ul>
+      
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/jamelouis" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    </nav>
+  </div>
+</header>
+
+  
+    <aside class="sidebar" itemscope itemtype="http://schema.org/WPSideBar">
+  <div class="slimContent">
+    
+      <div class="widget">
+    <h3 class="widget-title">Board</h3>
+    <div class="widget-body">
+        <div id="board">
+            <div class="content">
+                <p>欢迎交流与分享经验!</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Categories</h3>
+    <div class="widget-body">
+      <ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a><span class="category-list-count">7</span><ul class="category-list-child"><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/computer-graphics/unreal-engine/">unreal-engine</a><span class="category-list-count">3</span></li></ul></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/misc/">misc</a><span class="category-list-count">7</span></li><li class="category-list-item"><a class="category-list-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a><span class="category-list-count">58</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget-body">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/Rendering-Weekly/" rel="tag">Rendering-Weekly</a><span class="tag-list-count">58</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/hexo/" rel="tag">hexo</a><span class="tag-list-count">1</span></li><li class="tag-list-item"><a class="tag-list-link" href="/hexo-blog/tags/path-tracing/" rel="tag">path-tracing</a><span class="tag-list-count">1</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget-body tagcloud">
+      <a href="/hexo-blog/tags/Rendering-Weekly/" style="font-size: 14px;">Rendering-Weekly</a> <a href="/hexo-blog/tags/hexo/" style="font-size: 13px;">hexo</a> <a href="/hexo-blog/tags/path-tracing/" style="font-size: 13px;">path-tracing</a>
+    </div>
+  </div>
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Archive</h3>
+    <div class="widget-body">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2023/05/">May 2023</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2022/06/">June 2022</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/08/">August 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/07/">July 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/06/">June 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/05/">May 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/04/">April 2021</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/03/">March 2021</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/02/">February 2021</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2021/01/">January 2021</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/12/">December 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/11/">November 2020</a><span class="archive-list-count">5</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/10/">October 2020</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/09/">September 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/08/">August 2020</a><span class="archive-list-count">3</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/07/">July 2020</a><span class="archive-list-count">7</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/06/">June 2020</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2020/05/">May 2020</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/12/">December 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/11/">November 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/03/">March 2018</a><span class="archive-list-count">2</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2018/01/">January 2018</a><span class="archive-list-count">1</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/12/">December 2017</a><span class="archive-list-count">4</span></li><li class="archive-list-item"><a class="archive-list-link" href="/hexo-blog/archives/2017/11/">November 2017</a><span class="archive-list-count">3</span></li></ul>
+    </div>
+  </div>
+
+
+    
+      
+  <div class="widget">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget-body">
+      <ul class="recent-post-list list-unstyled no-thumbnail">
+        
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/misc/">misc</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2023/05/b70cc33d7a69.html" class="title">Hello hexo</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2023-05-07T14:03:50.490Z" itemprop="datePublished">2023-05-07</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2022/06/4fa029a8a7a8.html" class="title">Nori 作业</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2022-06-10T03:03:31.000Z" itemprop="datePublished">2022-06-10</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/155ef8f50554.html" class="title">Rendering Weekly 058</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-22T08:38:43.358Z" itemprop="datePublished">2021-08-22</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/d972502152c9.html" class="title">Rendering Weekly 057</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-15T15:12:51.466Z" itemprop="datePublished">2021-08-15</time>
+              </p>
+            </div>
+          </li>
+          
+          <li>
+            
+            <div class="item-inner">
+              <p class="item-category">
+                <a class="category-link" href="/hexo-blog/categories/rendering-weekly/">rendering-weekly</a>
+              </p>
+              <p class="item-title">
+                <a href="/hexo-blog/2021/08/e7be6253f23a.html" class="title">Rendering Weekly 056</a>
+              </p>
+              <p class="item-date">
+                <time datetime="2021-08-08T08:06:02.688Z" itemprop="datePublished">2021-08-08</time>
+              </p>
+            </div>
+          </li>
+          
+      </ul>
+    </div>
+  </div>
+  
+
+    
+  </div>
+</aside>
+
+  
+  
+<main class="main" role="main">
+  <div class="content">
+  <article id="post-computer-graphics-unreal-engine-浅析UE4中的EyeAdaption" class="article article-type-post" itemscope itemtype="http://schema.org/BlogPosting">
+    
+    <div class="article-header">
+      
+        
+  
+    <h1 class="article-title" itemprop="name">
+      浅析UE4中的EyeAdaption
+    </h1>
+  
+
+      
+      <div class="article-meta">
+        <span class="article-date">
+    <i class="icon icon-calendar-check"></i>
+	<a href="/hexo-blog/2017/11/958ceb399220.html" class="article-date">
+	  <time datetime="2017-11-14T14:03:31.000Z" itemprop="datePublished">2017-11-14</time>
+	</a>
+</span>
+        
+  <span class="article-category">
+    <i class="icon icon-folder"></i>
+    <a class="article-category-link" href="/hexo-blog/categories/computer-graphics/">computer-graphics</a>►<a class="article-category-link" href="/hexo-blog/categories/computer-graphics/unreal-engine/">unreal-engine</a>
+  </span>
+
+        
+
+        
+
+        <span class="post-comment"><i class="icon icon-comment"></i> <a href="/hexo-blog/2017/11/958ceb399220.html#comments" class="article-comment-link">Comments</a></span>
+        
+      </div>
+    </div>
+    <div class="article-entry marked-body" itemprop="articleBody">
+      
+        <h2 id="EyeAdaptation-In-UE4"><a href="#EyeAdaptation-In-UE4" class="headerlink" title="EyeAdaptation In UE4"></a>EyeAdaptation In UE4</h2><p><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/AutomaticExposure/">Eye Adaptation - UE4 Documentation</a>中，UE4是采用基于Histogram的方法来计算画面的平均中灰值的，并通过<em>LowPercent</em>和<em>HighPercent</em>来过滤一些极黑或者极亮的<br>像素块。通过<em>Min Brightness</em>和<em>Max Brightness</em>来限制中灰值<em>L</em>的取值范围。<em>Speed Up</em>和<em>Speed Down</em>来控制明到暗和暗到明的过度变化。并允许通过<em>Auto Exposure Bias</em><br>来曝光补偿。</p>
+<h4 id="Auto-Exposure-Mathematic-Model"><a href="#Auto-Exposure-Mathematic-Model" class="headerlink" title="Auto Exposure Mathematic Model"></a>Auto Exposure Mathematic Model</h4><ul>
+<li><p><img src="/hexo-blog/images/eye_adaptation/5.svg" alt="Auto Exposure" title="Exposure"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/4.svg" alt="Exposure Calculation" title="Exposure Calculation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/3.svg" alt="cache old luminance" title="Cache Old Luminance"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/2.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/6.svg" alt="Average Luminance" title="Average Luminance"></p>
+</li>
+</ul>
+<p>在[EyeAdaption - Overview]中，我们总结了EyeAdaptation的Mathematic Model。通过阅读UE4的Source Code，整体的EyeAdaption的过程大致一样，<br>只是在计算平均亮度值之一块有较大的差异。</p>
+<h4 id="Auto-Exposure-in-UE4"><a href="#Auto-Exposure-in-UE4" class="headerlink" title="Auto Exposure in UE4"></a>Auto Exposure in UE4</h4><ul>
+<li><p><img src="/hexo-blog/images/eye_adaptation/5.svg" alt="Auto Exposure" title="Exposure"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/7.svg" alt="Exposure Calculation" title="Exposure Calculation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/3.svg" alt="cache old luminance" title="Cache Old Luminance"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/11.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/10.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/9.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/8.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+</li>
+<li><p><img src="/hexo-blog/images/eye_adaptation/12.svg" alt="Average Luminance" title="Average Luminance"></p>
+</li>
+</ul>
+<p>在UE4中，计算平均中灰值的方式是基于histogram的，并且多了个曝光补偿因子来控制最终的曝光值。</p>
+<h2 id="浅析UE4中的EyeAdaption"><a href="#浅析UE4中的EyeAdaption" class="headerlink" title="浅析UE4中的EyeAdaption"></a>浅析UE4中的EyeAdaption</h2><p>UE4的EyeAdaption的代码基本上是按照Auto Exposure in UE4编写。因此，接下来只是单纯的把对应的mathematic equation和相关的Code放到一起，<br>并简单的在UE4的Code中简单注释公式和代码相关变量的关系。</p>
+<h4 id="Eye-Adaptation参数"><a href="#Eye-Adaptation参数" class="headerlink" title="Eye Adaptation参数"></a>Eye Adaptation参数</h4><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">/// PostProcessHistogramCommon.usf</span><br><span class="line"></span><br><span class="line">// Lmin: EyeAdaptationMin, LMax: EyeAdaptationMax</span><br><span class="line">// [0] .x:ExposureLowPercent/100, .y:EyeAdaptationHighPercent/100, .z:EyeAdaptationMin, .w:EyeAdaptationMax</span><br><span class="line"></span><br><span class="line">// temporal adaptation&#x27;s *delta time*: DeltaWorldTime, temporal adaptation&#x27;s *speed*: EyeAdaptionSpeedUp/Down</span><br><span class="line">// [1] .x:exp2(ExposureOffset), .y:DeltaWorldTime, .zw: EyeAdaptionSpeedUp/Down</span><br><span class="line"></span><br><span class="line">// 基于Histogram的Average Luminance的参数</span><br><span class="line">// [2] .x:Histogram multiply, .y:Histogram add, .z:HistogramMinIntensity w:unused</span><br><span class="line">float4 EyeAdaptationParams[3];</span><br></pre></td></tr></table></figure>
+
+<h4 id="Eye-Adaptation"><a href="#Eye-Adaptation" class="headerlink" title="Eye Adaptation"></a>Eye Adaptation</h4><p><img src="/hexo-blog/images/eye_adaptation/5.svg" alt="Auto Exposure" title="Exposure"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">/// PostProcessTonemap.usf</span><br><span class="line"></span><br><span class="line">// Exposure存储在EyeAdaptation纹理里，vEyeAdapationVS.x即Exposure</span><br><span class="line">vEyeAdapationVS.x = EyeAdaptation.Load(int3(0, 0, 0)).r;</span><br><span class="line">OutColor = TonemapCommonPS(UV, vEyeAdapationVS, GrainUV, FringeUV, FullViewUV, SvPosition);</span><br><span class="line"></span><br><span class="line">// TonemapCommonPS</span><br><span class="line">float ExposureScale = InExposureScaleVignette.x;</span><br><span class="line">...</span><br><span class="line">// LinearColor, 即Color(i,j)</span><br><span class="line">LinearColor *= ExposureScale;</span><br><span class="line">...</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<p>从EyeAdaptation纹理中得到当前的<em>Exposure</em>值，并把当前的<em>LinearColor</em>乘以该<em>Exposure</em>值来调整画面的明暗。</p>
+<h4 id="Temporal-Adaptation"><a href="#Temporal-Adaptation" class="headerlink" title="Temporal Adaptation"></a>Temporal Adaptation</h4><p><img src="/hexo-blog/images/eye_adaptation/11.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+<p><img src="/hexo-blog/images/eye_adaptation/10.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+<p><img src="/hexo-blog/images/eye_adaptation/9.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+<p><img src="/hexo-blog/images/eye_adaptation/8.svg" alt="Temporal Adaptation" title="Temporal Adaptation"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">/// PostProcessEyeAdaptation.usf</span><br><span class="line"></span><br><span class="line">float ComputeEyeAdaptation(float OldExposure, float TargetExposure, float FrameTime)</span><br><span class="line">&#123;</span><br><span class="line">    float Diff = TargetExposure - OldExposure;</span><br><span class="line">    </span><br><span class="line">    // dark adaption &amp; light adaption 的 *speed*参数</span><br><span class="line">    const float EyeAdaptionSpeedUp   = EyeAdaptationParams[1].z;</span><br><span class="line">    const float EyeAdaptionSpeedDown = EyeAdaptationParams[1].w;</span><br><span class="line">    </span><br><span class="line">    // Diff的正负表示从明到暗或者暗到明的过程</span><br><span class="line">    float AdaptionSpeed = (Diff &gt; 0) ? EyeAdaptionSpeedUp : EyeAdaptionSpeedDown;</span><br><span class="line">    </span><br><span class="line">    float Factor = 1.0f - exp2(-FrameTime * AdaptionSpeed);</span><br><span class="line">    </span><br><span class="line">    // Temporal Exposure *L*: OldExposure + Diff * Factor</span><br><span class="line">    // clamp(L, LMin, LMax), LMin：EyeAdaptationParams[0].z， LMax: EyeAdaptationParams[0].w</span><br><span class="line">    return clamp(OldExposure + Diff * Factor, EyeAdaptationParams[0].z, EyeAdaptationParams[0].w);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="Exposure-Calculation"><a href="#Exposure-Calculation" class="headerlink" title="Exposure Calculation"></a>Exposure Calculation</h4><p><img src="/hexo-blog/images/eye_adaptation/7.svg" alt="Exposure Calculation" title="Exposure Calculation"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line">/// PostProcessEyeAdaptation.usf</span><br><span class="line"></span><br><span class="line">float2 MainEyeAdaptationCommon()</span><br><span class="line">&#123;</span><br><span class="line">    float2 OutColor = 0;</span><br><span class="line">    // 曝光补偿</span><br><span class="line">    float ExposureOffsetMultipler = EyeAdaptationParams[1].x;</span><br><span class="line">    </span><br><span class="line">    // 从Histogram中计算画面的中灰值</span><br><span class="line">    float TargetExposure = ComputeEyeAdaptationExposure(PostprocessInput0);</span><br><span class="line">    </span><br><span class="line">    // Lold</span><br><span class="line">    float OldExposureScale = PostprocessInput0.Load(int3(0, 1, 0)).r;</span><br><span class="line">    float OldExposure = ExposureOffsetMultipler / ( OldExposureScale != 0 ? OldExposureScale : 1.0f );</span><br><span class="line">    </span><br><span class="line">    // delta time in temporal adaptation</span><br><span class="line">    float FrameTime = EyeAdaptationParams[1].y;</span><br><span class="line">    </span><br><span class="line">    // eye adaptation changes over time</span><br><span class="line">    float SmoothedExposure = ComputeEyeAdaptation(OldExposure, TargetExposure, FrameTime);</span><br><span class="line">    </span><br><span class="line">    // KeyValue = 1.0f, smoothedExposure = clamp(L, Lmin, Lmax)</span><br><span class="line">    float SmoothedExposureScale = 1.0f / max(0.0001f, SmoothedExposure);</span><br><span class="line">    float TargetExposureScale =   1.0f / max(0.0001f, TargetExposure);</span><br><span class="line">    </span><br><span class="line">    // Exposure</span><br><span class="line">    OutColor.r = ExposureOffsetMultipler * SmoothedExposureScale;</span><br><span class="line">    OutColor.g = ExposureOffsetMultipler * TargetExposureScale;</span><br><span class="line">    </span><br><span class="line">    return OutColor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>*1.0&#x2F;max(0.0001f,SmoothedExposure)*避免除以一个很小的数值。</p>
+<h4 id="Average-Luminance"><a href="#Average-Luminance" class="headerlink" title="Average Luminance"></a>Average Luminance</h4><p><img src="/hexo-blog/images/eye_adaptation/12.svg" alt="Average Luminance" title="Average Luminance"></p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">/// PostProcessHistogramCommon.usf</span><br><span class="line"></span><br><span class="line">float ComputeEyeAdaptationExposure(Texture2D HistogramTexture)</span><br><span class="line">&#123;</span><br><span class="line">    float HistogramSum = ComputeHistogramSum(HistogramTexture);</span><br><span class="line">    // low percent: EyeAdaptationParams[0].x, high percent: EyeAdaptationParams[0].y</span><br><span class="line">    float UnclampedAdaptedLuminance = ComputeAverageLuminaneWithoutOutlier(HistogramTexture, HistogramSum * EyeAdaptationParams[0].x, HistogramSum * EyeAdaptationParams[0].y);</span><br><span class="line">    // Lmin: EyeAdaptationParams[0].z, Lmax: EyeAdaptationParams[0].w</span><br><span class="line">    float ClampedAdaptedLuminance = clamp(UnclampedAdaptedLuminance, EyeAdaptationParams[0].z, EyeAdaptationParams[0].w);</span><br><span class="line">    </span><br><span class="line">    return ClampedAdaptedLuminance;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>可以这么理解，把画面的所有像素放到一个数组里，根据像素的Lum值大小排序，那么<em>HistogramSum</em>就是该数组的大小，[histogramSum * EyeAdaptationParams[0].x, HistogramSum * EyeAdaptationParams[0].y]表示对<br>画面平均亮度值有贡献的区域。即平均亮度值是该区域的亮度和除以区域所包含的像素个数。</p>
+<p>基于Histogram的方法的Average Luminance算法涉及的内容比较多，在这里只是一带而过。</p>
+<h2 id="小结"><a href="#小结" class="headerlink" title="小结"></a>小结</h2><p><strong>EyeAdaptation关键点就是如何计算画面的平均亮度值。</strong></p>
+<p><a target="_blank" rel="noopener" href="https://mynameismjp.wordpress.com/2011/08/10/average-luminance-compute-shader/">Average Luminance Calculation Using a Compute Shader</a>(with code in blog)中，先将画面转到lum空间，通过Dx的Mimap或者Compute Shader计算出平均亮度值。<br>UE4也是通过Compute Shader计算出画面的Histogram，通过Histogram计算出平均亮度值。</p>
+<h2 id="Reference"><a href="#Reference" class="headerlink" title="Reference"></a>Reference</h2><ul>
+<li><a target="_blank" rel="noopener" href="https://docs.unrealengine.com/latest/INT/Engine/Rendering/PostProcessEffects/AutomaticExposure/">Eye Adpation(Auto-Exposure)</a></li>
+<li><a target="_blank" rel="noopener" href="https://knarkowicz.wordpress.com/2016/01/09/automatic-exposure/">Automatic exposure</a></li>
+<li><a target="_blank" rel="noopener" href="https://mynameismjp.wordpress.com/2011/08/10/average-luminance-compute-shader/">Average Luminance Calculation Using a Compute Shader</a></li>
+<li>PostProcessEyeAdaptation.usf</li>
+<li>PostProcessTonemap.usf</li>
+<li>PostProcessHistogramCommon.usf</li>
+</ul>
+
+      
+    </div>
+    <div class="article-footer">
+      <blockquote class="mt-2x">
+  <ul class="post-copyright list-unstyled">
+    
+    <li class="post-copyright-link hidden-xs">
+      <strong>本文链接：</strong>
+      <a href="http://jamelouis.github.io/hexo-blog/2017/11/958ceb399220.html" title="浅析UE4中的EyeAdaption" target="_blank" rel="external">http://jamelouis.github.io/hexo-blog/2017/11/958ceb399220.html</a>
+    </li>
+    
+    <li class="post-copyright-license">
+      <strong>版权声明： </strong> 本博客所有文章除特别声明外，均采用 <a href="http://creativecommons.org/licenses/by/4.0/deed.zh" target="_blank" rel="external">CC BY 4.0 CN协议</a> 许可协议。转载请注明出处！
+    </li>
+  </ul>
+</blockquote>
+
+
+<div class="panel panel-default panel-badger">
+  <div class="panel-body">
+    <figure class="media">
+      <div class="media-left">
+        <a href="https://github.com/jamelouis" target="_blank" class="img-burn thumb-sm visible-lg">
+          <img src="/hexo-blog/images/avatar.png" class="img-rounded w-full" alt="">
+        </a>
+      </div>
+      <div class="media-body">
+        <h3 class="media-heading"><a href="https://github.com/jamelouis" target="_blank"><span class="text-dark">Jame Louis</span><small class="ml-1x">Game Engine Developer</small></a></h3>
+        <div>Focus on Computer Graphics, Rendering and Path Tracing。</div>
+      </div>
+    </figure>
+  </div>
+</div>
+
+
+    </div>
+  </article>
+  
+    
+  <section id="comments">
+  	
+      <div id="vcomments"></div>
+    
+  </section>
+
+
+  
+</div>
+
+  <nav class="bar bar-footer clearfix" data-stick-bottom>
+  <div class="bar-inner">
+  
+  <ul class="pager pull-left">
+    
+    <li class="prev">
+      <a href="/hexo-blog/2017/11/48ea729109d0.html" title="EyeAdaption - Overview"><i class="icon icon-angle-left" aria-hidden="true"></i><span>&nbsp;&nbsp;Newer</span></a>
+    </li>
+    
+    
+    <li class="next">
+      <a href="/hexo-blog/2017/11/818206ef7173.html" title="浅析UE4中VisualizeHDR"><span>Older&nbsp;&nbsp;</span><i class="icon icon-angle-right" aria-hidden="true"></i></a>
+    </li>
+    
+    
+  </ul>
+  
+  
+  
+  <div class="bar-right">
+    
+  </div>
+  </div>
+</nav>
+  
+
+
+</main>
+
+  <footer class="footer" itemscope itemtype="http://schema.org/WPFooter">
+	
+	
+    <ul class="social-links">
+    	
+        <li><a href="https://github.com/jamelouis" target="_blank" title="Github" data-toggle=tooltip data-placement=top><i class="icon icon-github"></i></a></li>
+        
+        <li><a href="/hexo-blog/atom.xml" target="_blank" title="Rss" data-toggle=tooltip data-placement=top><i class="icon icon-rss"></i></a></li>
+        
+    </ul>
+
+    <div class="copyright">
+    	
+        <div class="publishby">
+        	Theme by <a href="https://github.com/cofess" target="_blank"> cofess </a>base on <a href="https://github.com/cofess/hexo-theme-pure" target="_blank">pure</a>.
+        </div>
+    </div>
+</footer>
+  <script src="//cdn.jsdelivr.net/npm/jquery@1.12.4/dist/jquery.min.js"></script>
+<script>
+window.jQuery || document.write('<script src="js/jquery.min.js"><\/script>')
+</script>
+
+<script src="/hexo-blog/js/plugin.min.js"></script>
+
+
+<script src="/hexo-blog/js/application.js"></script>
+
+
+    <script>
+(function (window) {
+    var INSIGHT_CONFIG = {
+        TRANSLATION: {
+            POSTS: 'Posts',
+            PAGES: 'Pages',
+            CATEGORIES: 'Categories',
+            TAGS: 'Tags',
+            UNTITLED: '(Untitled)',
+        },
+        ROOT_URL: '/hexo-blog/',
+        CONTENT_URL: '/hexo-blog/content.json',
+    };
+    window.INSIGHT_CONFIG = INSIGHT_CONFIG;
+})(window);
+</script>
+
+<script src="/hexo-blog/js/insight.js"></script>
+
+
+
+
+
+
+   
+
+
+
+
+   
+    
+  <script src="//cdn1.lncld.net/static/js/3.0.4/av-min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/valine"></script>
+  <script type="text/javascript">
+  var GUEST = ['nick', 'mail', 'link'];
+  var meta = 'nick,mail,link';
+  meta = meta.split(',').filter(function(item) {
+    return GUEST.indexOf(item) > -1;
+  });
+  new Valine({
+    el: '#vcomments',
+    verify: false,
+    notify: false,
+    appId: '',
+    appKey: '',
+    placeholder: 'Just go go',
+    avatar: 'mm',
+    meta: meta,
+    pageSize: '10' || 10,
+    visitor: false
+  });
+  </script>
+
+     
+
+
+
+
+
+
+
+</body>
+</html>
